@@ -1,3 +1,6 @@
+#ifdef SCOREP_USER_ENABLE
+#include "scorep/SCOREP_User.inc"
+#endif
 module perf_mod
 
 !-----------------------------------------------------------------------
@@ -728,6 +731,9 @@ contains
 #endif
       perf_timing_ovhd = perf_timing_ovhd - ovhd_start
    endif
+#ifdef SCOREP_USER_ENABLE
+   SCOREP_USER_REGION_BY_NAME_BEGIN(trim(event), SCOREP_USER_REGION_TYPE_COMMON)
+#endif
 !$OMP END MASTER
 
    if ((perf_add_detail) .AND. (cur_timing_detail < 100)) then
@@ -795,6 +801,9 @@ contains
    if (timing_disable_depth > 0) return
 
 !$OMP MASTER
+#ifdef SCOREP_USER_ENABLE
+   SCOREP_USER_REGION_BY_NAME_END(trim(event))
+#endif
    if (perf_ovhd_measurement) then
 #ifdef HAVE_MPI
       ovhd_start = mpi_wtime()
